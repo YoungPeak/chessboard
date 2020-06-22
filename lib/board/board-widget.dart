@@ -1,5 +1,7 @@
 
 import 'package:chessboard/board/board-paint.dart';
+import 'package:chessboard/board/pieces-painter.dart';
+import 'package:chessboard/cchess/phase.dart';
 import 'package:chessboard/common/color-consts.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +28,13 @@ class BoardWidget extends StatelessWidget {
         color: ColorConsts.BoardBackground
       ),
       child: CustomPaint(
+        // 背景一层绘制棋盘上线格
         painter: BoardPainter(width: width),
+        // 前景绘制棋子
+        foregroundPainter: PiecesPainter(
+          width: width,
+          phase: Phase.defaultPhase()
+        ),
         child: Container(
           margin: EdgeInsets.symmetric(
             vertical: Padding,

@@ -2,17 +2,13 @@
 import 'dart:math';
 
 import 'package:chessboard/board/board-widget.dart';
+import 'package:chessboard/board/painter-base.dart';
 import 'package:chessboard/common/color-consts.dart';
 import 'package:flutter/material.dart';
 
-class BoardPainter extends CustomPainter {
-  // 棋盘的宽度， 横盘上线格的总宽度，每一个格子的边长
-  final double width, gridWidth, squareSide;
-  final thePaint = Paint();
+class BoardPainter extends PainterBase {
 
-  BoardPainter({@required this.width}):
-        gridWidth = (width - BoardWidget.Padding * 2) * 8 / 9,
-        squareSide = (width - BoardWidget.Padding * 2) / 9;
+  BoardPainter({@required double width}): super(width: width);
 
   @override
   void paint(Canvas canvas, Size size) {

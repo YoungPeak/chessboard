@@ -48,7 +48,7 @@ class WordsOnBoard extends StatelessWidget {
           Row(children: rChildren)
         ],
       ),
-      style: TextStyle(color: ColorConsts.BoardTips),
+      style: TextStyle(color: ColorConsts.BoardTips, fontFamily: 'QiTi'),
     );
   }
 
