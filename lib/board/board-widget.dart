@@ -14,13 +14,14 @@ class BoardWidget extends StatelessWidget {
   // 棋盘的宽高
   final double width, height;
 
+  final Function(BuildContext, int) onBoardTap;
 
-  BoardWidget({@required this.width}):
+  BoardWidget({@required this.width, @required this.onBoardTap}):
       height = (width - Padding * 2) / 9 * 10 + (Padding + DigitsHeight) * 2;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final boardContainer = Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
@@ -46,6 +47,21 @@ class BoardWidget extends StatelessWidget {
         ),
       ),
     );
+    // 用 GestureDetector 组件包裹我们的 board 组件，用于检测 board 上的点击事件
+    return GestureDetector(child: boardContainer, onTapUp: (d) {
+      final gridWidth = (width - Padding * 2) * 8 / 9;
+      final squareSide = gridWidth / 8;
+      final dx = d.localPosition.dx, dy = d.localPosition.dy;
+
+      final row = (dy - Padding - DigitsHeight) ~/ squareSide;
+      final column = (dx - Padding) ~/ squareSide;
+      if (row < 0 || row > 9) return;
+      if (column < 0 || column > 9) return;
+
+      print('row: $row, column: $column');
+      // 回调
+      onBoardTap(context, row * 9 + column);
+    });
   }
 
 
