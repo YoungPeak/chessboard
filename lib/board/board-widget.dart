@@ -1,8 +1,8 @@
 
 import 'package:chessboard/board/board-paint.dart';
 import 'package:chessboard/board/pieces-painter.dart';
-import 'package:chessboard/cchess/phase.dart';
 import 'package:chessboard/common/color-consts.dart';
+import 'package:chessboard/game/battle.dart';
 import 'package:flutter/material.dart';
 
 import 'words-on-board.dart';
@@ -34,7 +34,9 @@ class BoardWidget extends StatelessWidget {
         // 前景绘制棋子
         foregroundPainter: PiecesPainter(
           width: width,
-          phase: Phase.defaultPhase()
+          phase: Battle.shared.phase,
+          focusIndex: Battle.shared.focusIndex,
+          blurIndex: Battle.shared.blurIndex
         ),
         child: Container(
           margin: EdgeInsets.symmetric(

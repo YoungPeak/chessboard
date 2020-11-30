@@ -67,4 +67,23 @@ class Phase {
       _pieces[i] ??= Piece.Empty;
     }
   }
+
+  bool move(int from, int to) {
+    if (!validateMove(from, to)) return false;
+
+    // 修改棋盘
+    _pieces[to] = _pieces[from];
+    _pieces[from] = Piece.Empty;
+
+    // 交换走棋方
+    //_side = Side.oppo(_side);
+
+    return true;
+
+  }
+
+  bool validateMove(int from, int to) {
+    // TODO:
+    return true;
+  }
 }
