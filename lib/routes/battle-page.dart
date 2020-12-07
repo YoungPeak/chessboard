@@ -1,7 +1,9 @@
 import 'package:chessboard/cchess/cc-base.dart';
+import 'package:chessboard/common/color-consts.dart';
 import 'package:chessboard/game/battle.dart';
 import 'package:flutter/material.dart';
 import '../board/board-widget.dart';
+import '../main.dart';
 
 class BattlePage extends StatefulWidget {
 
@@ -15,6 +17,91 @@ class BattlePage extends StatefulWidget {
 }
 
 class _BattlePageState extends State<BattlePage> {
+
+  Widget createPageHeader() {
+    final titleStyle = TextStyle(fontSize: 28, color: ColorConsts.DarkTextPrimary);
+    final subTitleStyle = TextStyle(fontSize: 16, color: ColorConsts.DarkTextSecondary);
+
+    return Container(
+      margin: EdgeInsets.only(top: ChessRoadApp.StatusBarHeight),
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.arrow_back, color: ColorConsts.DarkTextPrimary),
+                onPressed: (){},
+              ),
+              Expanded(child: SizedBox()),
+              Text('单机对战', style: titleStyle),
+              Expanded(child: SizedBox()),
+              IconButton(
+                icon: Icon(Icons.settings, color: ColorConsts.DarkTextPrimary),
+                onPressed: (){},
+              )
+            ],
+          ),
+          Container(
+            height: 4,
+            width: 180,
+            margin: EdgeInsets.only(bottom: 10),
+            decoration: BoxDecoration(
+              color: ColorConsts.BoardBackground,
+              borderRadius: BorderRadius.circular(2)
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text('[游戏状态]', maxLines: 1, style: subTitleStyle),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget createBoard() {
+    final windowSize = MediaQuery.of(context).size;
+
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: BattlePage.BoardMarginH,
+        vertical: BattlePage.BoardMarginV
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: ColorConsts.BoardBackground
+      ),
+      child: BoardWidget(
+        // 棋盘的宽度已经扣除了部分边界
+        width: windowSize.width - BattlePage.BoardMarginH * 2,
+        onBoardTap: onBoardTap,
+      ),
+    );
+  }
+
+  Widget createOperatorBar() {
+    final buttonStyle = TextStyle(color: ColorConsts.Primary, fontSize: 20);
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: ColorConsts.BoardBackground
+      ),
+      margin: EdgeInsets.symmetric(horizontal: BattlePage.BoardMarginH),
+      padding: EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: <Widget>[
+          Expanded(child: SizedBox()),
+          FlatButton(child: Text('新对局', style: buttonStyle), onPressed: (){}),
+          Expanded(child: SizedBox()),
+          FlatButton(child: Text('悔棋', style: buttonStyle), onPressed: (){}),
+          Expanded(child: SizedBox()),
+          FlatButton(child: Text('分析局面', style: buttonStyle), onPressed: (){}),
+          Expanded(child: SizedBox())
+        ],
+      ),
+    );
+  }
 
   onBoardTap(BuildContext context, int index) {
     print('board cross index: $index');
@@ -59,19 +146,15 @@ class _BattlePageState extends State<BattlePage> {
 
   @override
   Widget build(BuildContext context) {
-    final windowSize = MediaQuery
-        .of(context)
-        .size;
-    final boardHeight = windowSize.width - BattlePage.BoardMarginH * 2;
+
+    final header = createPageHeader();
+    final board = createBoard();
+    final operatorBar = createOperatorBar();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Battle')),
-      body: Container(
-        margin: const EdgeInsets.symmetric(
-            horizontal: BattlePage.BoardMarginH,
-            vertical: BattlePage.BoardMarginV
-        ),
-        child: BoardWidget(width: boardHeight, onBoardTap: onBoardTap),
+      backgroundColor: ColorConsts.DarkBackground,
+      body: Column(
+        children: <Widget>[header, board, operatorBar],
       ),
     );
   }
