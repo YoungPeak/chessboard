@@ -3,6 +3,20 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class ColorConsts {
+
+  // Logo 的颜色，一般都是品牌色
+  static const LogoColor = Color(0xFF6D000D);
+
+  // 主色，App 定调的颜色，一般从 Logo 中提升
+  static const Primary = Color(0xFF461220);
+  // 辅助色
+  static const Secondary = Color(0x99461220);
+
+  // 深色背景
+  static const DarkBackground = Colors.brown;
+  // 浅色背景
+  static const LightBackground = Color(0xFFEEE0CB);
+
   // 棋盘颜色
   static const BoardBackground = Color(0xFFEBC38D);
 
