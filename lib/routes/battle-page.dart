@@ -1,3 +1,4 @@
+
 import 'package:chessboard/cchess/cc-base.dart';
 import 'package:chessboard/common/color-consts.dart';
 import 'package:chessboard/game/battle.dart';
@@ -8,8 +9,8 @@ import '../main.dart';
 class BattlePage extends StatefulWidget {
 
   // 棋盘的纵横方向的边距
-  static const BoardMarginV = 10.0,
-      BoardMarginH = 10.0;
+
+  static double boardMargin = 10.0, screenPaddingH = 10.0;
 
   @override
   State<StatefulWidget> createState() => _BattlePageState();
@@ -30,7 +31,7 @@ class _BattlePageState extends State<BattlePage> {
             children: <Widget>[
               IconButton(
                 icon: Icon(Icons.arrow_back, color: ColorConsts.DarkTextPrimary),
-                onPressed: (){},
+                onPressed: () => Navigator.of(context).pop()
               ),
               Expanded(child: SizedBox()),
               Text('单机对战', style: titleStyle),
@@ -64,16 +65,16 @@ class _BattlePageState extends State<BattlePage> {
 
     return Container(
       margin: EdgeInsets.symmetric(
-        horizontal: BattlePage.BoardMarginH,
-        vertical: BattlePage.BoardMarginV
+        horizontal: BattlePage.screenPaddingH,
+        vertical: BattlePage.boardMargin
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         color: ColorConsts.BoardBackground
       ),
       child: BoardWidget(
-        // 棋盘的宽度已经扣除了部分边界
-        width: windowSize.width - BattlePage.BoardMarginH * 2,
+        // 这里将screenPaddingH作为边距，放置在BoardWidget左右，这样棋盘将水平居中显示
+        width: windowSize.width - BattlePage.screenPaddingH * 2,
         onBoardTap: onBoardTap,
       ),
     );
@@ -87,7 +88,7 @@ class _BattlePageState extends State<BattlePage> {
         borderRadius: BorderRadius.circular(5),
         color: ColorConsts.BoardBackground
       ),
-      margin: EdgeInsets.symmetric(horizontal: BattlePage.BoardMarginH),
+      margin: EdgeInsets.symmetric(horizontal: BattlePage.screenPaddingH),
       padding: EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: <Widget>[
@@ -99,6 +100,63 @@ class _BattlePageState extends State<BattlePage> {
           FlatButton(child: Text('分析局面', style: buttonStyle), onPressed: (){}),
           Expanded(child: SizedBox())
         ],
+      ),
+    );
+  }
+
+  // 对于底部的空间的弹性处理
+  // 针对屏幕比较短的情况，点击一个按钮把着法列表弹出
+  Widget buildFooter() {
+    final size = MediaQuery.of(context).size;
+
+    final manualText = '<暂无棋谱>';
+
+    if (size.height / size.width > 16 / 9) {
+      return buildManualPanel(manualText);
+    } else {
+      return buildExpandableManualPanel(manualText);
+    }
+  }
+
+  Widget buildManualPanel(String text) {
+    final manualStyle = TextStyle(
+      fontSize: 18,
+      color: ColorConsts.DarkTextSecondary,
+      height: 1.5
+    );
+
+    return Expanded(
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 16),
+        child: SingleChildScrollView(child: Text(text, style: manualStyle)),
+      ),
+    );
+  }
+
+  // 短屏幕显示一个按钮，点击它后弹出着法列表
+  Widget buildExpandableManualPanel(String text) {
+
+    final manualStyle = TextStyle(fontSize: 18, height: 1.5);
+
+    return Expanded(
+      child: IconButton(
+        icon: Icon(Icons.expand_less, color: ColorConsts.DarkTextPrimary),
+        onPressed: () => showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('棋谱', style: TextStyle(color: ColorConsts.Primary)),
+              content: SingleChildScrollView(child: Text(text, style: manualStyle)),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('好的'),
+                  onPressed: () => Navigator.of(context).pop()
+                )
+              ],
+            );
+          }
+        ),
       ),
     );
   }
@@ -136,6 +194,18 @@ class _BattlePageState extends State<BattlePage> {
     setState(() {});
   }
 
+  void calcScreenPaddingH() {
+    // 当屏幕的纵横比小于16/9时，限制棋盘的宽度
+    final windowSize = MediaQuery.of(context).size;
+    double height = windowSize.height, width = windowSize.width;
+
+    if (height / width < 16.0 / 9.0) {
+      width = height * 9 / 16;
+      // 棋盘宽度之外的空间，分左右两边，由screenPaddingH来持有，布局时添加到BoardWidget外围水平边距
+      BattlePage.screenPaddingH = (windowSize.width - width) / 2 - BattlePage.boardMargin;
+    }
+  }
+
   @override
   void initState() {
 
@@ -147,14 +217,17 @@ class _BattlePageState extends State<BattlePage> {
   @override
   Widget build(BuildContext context) {
 
+    calcScreenPaddingH();
+
     final header = createPageHeader();
     final board = createBoard();
     final operatorBar = createOperatorBar();
+    final footer = buildFooter();
 
     return Scaffold(
       backgroundColor: ColorConsts.DarkBackground,
       body: Column(
-        children: <Widget>[header, board, operatorBar],
+        children: <Widget>[header, board, operatorBar, footer],
       ),
     );
   }
